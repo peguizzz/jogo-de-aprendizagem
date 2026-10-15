@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trilha da Aprendizagem</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#dff3ff;--card:#fff;--ink:#1b2a5a;--mute:#4b5a8a;--line:#1b2a5a;--ok:#0a9b6b;--bad:#d93a4a;--sun:#ffd23f;--sh:#1b2a5a;
+--c0:#ff5a5f;--c1:#19b36b;--c2:#f2a900;--c3:#7b5cfa;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10183a;--card:#1b2658;--ink:#eef3ff;--mute:#a9b6e6;--line:#8fa4f0;--ok:#32d29b;--bad:#ff6f7d;--sh:#050a22}html{color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10183a;--card:#1b2658;--ink:#eef3ff;--mute:#a9b6e6;--line:#8fa4f0;--ok:#32d29b;--bad:#ff6f7d;--sh:#050a22}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Fredoka",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:500}
+main{max-width:640px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:clamp(2.2rem,9vw,3.4rem);line-height:1;margin:12px 0 8px;font-weight:800;letter-spacing:-.03em}
+h2{font-size:1.3rem;line-height:1.3;margin:0 0 14px;font-weight:700}
+p{color:var(--mute);margin:0 0 20px;line-height:1.5}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:20px}
+button{font:inherit;font-weight:700;cursor:pointer;border:0;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--c3);outline-offset:2px}
+.btn{background:var(--ink);color:var(--bg);padding:14px 22px;border-radius:14px;font-size:1.05rem;width:100%;margin-top:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.row{display:flex;gap:8px;margin:8px 0 16px}
+.seg{flex:1;padding:12px;border-radius:12px;background:transparent;border:2px solid var(--line);color:var(--ink)}
+.seg[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.nome{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.dot{width:16px;height:16px;border-radius:50%;flex:none}
+input{font:inherit;flex:1;min-width:0;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.hidden{display:none!important}
+#placar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.result-line{flex:1 1 130px;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-radius:14px;background:var(--card);border:2px solid var(--line);font-size:.9rem}
+.result-line small{display:block;color:var(--mute);font-size:.72rem}
+.result-line b{font-size:1.2rem}
+.result-line.vez{border-color:var(--cor)}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px}
+.casa{aspect-ratio:1;border-radius:12px;background:var(--card);border:2px solid var(--line);padding:4px;font-size:.75rem;color:var(--mute);display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.casa.ini,.casa.fim{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.casa.acerto{border-color:var(--ok)}.casa.erro{border-color:var(--bad)}
+.casa.atual{box-shadow:0 0 0 3px var(--cor)}
+.fichas{display:flex;flex-wrap:wrap;gap:2px;justify-content:center}
+.ficha{width:14px;height:14px;border-radius:50%;border:2px solid var(--card)}
+.vez-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border-radius:99px;color:#fff;font-weight:700;margin-bottom:12px}
+.vez-tag .dot{background:#fff}
+.dado-box{display:flex;align-items:center;gap:16px}
+#dado{font-size:4rem;line-height:1;width:80px;text-align:center}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;padding:14px;border-radius:14px;background:var(--bg);border:2px solid var(--line);font-size:1rem}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt .l{flex:none;width:32px;height:32px;border-radius:10px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-size:.9rem}
+.opt.certa{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--bg))}
+.opt.errada{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,var(--bg))}
+.opt:disabled{cursor:default}
+#fb-msg{font-size:1.1rem;font-weight:700;color:var(--ink);margin:14px 0 0}
+.res{display:grid;gap:6px;margin-top:16px}
+.res div{display:flex;justify-content:space-between;padding:10px 12px;border-radius:12px;background:var(--bg);border:2px solid var(--line)}
+.trofeu{font-size:4rem;text-align:center}
+
+body{background:var(--bg) radial-gradient(circle at 12% 8%,rgba(255,210,63,.55) 0 70px,transparent 71px),radial-gradient(circle at 92% 22%,rgba(255,90,95,.25) 0 90px,transparent 91px),radial-gradient(circle at 80% 95%,rgba(123,92,250,.25) 0 110px,transparent 111px);background-attachment:fixed}
+h1{color:var(--ink);text-shadow:3px 3px 0 var(--sun)}
+.card{border-width:3px;border-radius:24px;box-shadow:0 6px 0 var(--sh)}
+.btn{border-radius:16px;border:3px solid var(--sh);background:var(--sun);color:#1b2a5a;box-shadow:0 5px 0 var(--sh);transition:transform .08s,box-shadow .08s}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 var(--sh)}
+.btn.alt{background:var(--card);color:var(--ink)}
+.btn.perigo{background:var(--c0);color:#fff}
+.seg{border-width:3px;border-radius:14px;font-weight:700}
+.seg[aria-pressed="true"]{background:var(--c3);border-color:var(--sh);color:#fff;box-shadow:0 3px 0 var(--sh)}
+input{border-width:3px}
+.casa{border-width:3px;border-radius:14px;font-weight:600;box-shadow:0 3px 0 var(--sh)}
+.casa.ini{background:var(--c1);border-color:var(--sh);color:#fff}
+.casa.fim{background:var(--c0);border-color:var(--sh);color:#fff}
+.result-line{border-width:3px;border-radius:16px;box-shadow:0 3px 0 var(--sh)}
+.result-line.vez{background:var(--sun);color:#1b2a5a}
+.result-line.vez small{color:#1b2a5a}
+.ficha{border-color:var(--sh)}
+.opt{border-width:3px;border-radius:16px;box-shadow:0 3px 0 var(--sh)}
+.opt .l{background:var(--c3);color:#fff}
+.res div{border-width:3px}
+.acoes{display:flex;gap:10px;margin-top:14px}
+.acoes .btn{margin-top:0;font-size:.95rem;padding:12px 10px}
+</style>
+</head>
+<body>
+<main>
+  <section id="tela-inicio">
+    <h1>Trilha da Aprendizagem</h1>
+    <p>Role o dado, ande pelo tabuleiro e responda à pergunta da casa onde parar. Acertou: +100. Errou: −50 (a pontuação pode ficar negativa). Quem chegar primeiro à casa final ganha +200 e o jogo termina ao fim da rodada.</p>
+    <div class="card">
+      <h2>Quantos jogadores?</h2>
+      <div class="row" id="qtd"></div>
+      <div id="nomes"></div>
+      <button class="btn" id="comecar">Começar jogo</button>
+    </div>
+  </section>
+
+  <section id="tela-jogo" class="hidden">
+    <div id="placar"></div>
+    <div class="board" id="tabuleiro"></div>
+    <div class="card" id="painel">
+      <div id="vez" class="vez-tag"></div>
+      <div id="area-dado" class="dado-box">
+        <div id="dado" aria-live="polite">⚀</div>
+        <button class="btn" id="rolar" style="margin-top:0">Rolar dado</button>
+      </div>
+      <div id="area-pergunta" class="hidden">
+        <h2 id="enunciado"></h2>
+        <div class="opts" id="opts"></div>
+      </div>
+      <div id="feedback" class="hidden">
+        <p id="fb-msg"></p>
+        <button class="btn" id="continuar">Continuar</button>
+      </div>
+    </div>
+    <div class="acoes">
+      <button class="btn alt" id="novo-jogo">🔄 Novo jogo</button>
+      <button class="btn perigo" id="encerrar">⏹ Encerrar jogo</button>
+    </div>
+  </section>
+
+  <section id="tela-fim" class="hidden">
+    <div class="card">
+      <div class="trofeu">🏆</div>
+      <h2 id="msg-fim" style="text-align:center"></h2>
+      <div class="res" id="res-fim"></div>
+      <button class="btn" id="novo">Novo jogo</button>
+    </div>
+  </section>
+</main>
+
+<script>
+const TOTAL_CASAS = 25;
+const COLUNAS = 5;
+const FIM = TOTAL_CASAS - 1;
+const PONTOS_ACERTO = 100;
+const PENALIDADE_ERRO = 50;
+const BONUS_CHEGADA = 200;
+const CORES = ["var(--c0)", "var(--c1)", "var(--c2)", "var(--c3)"];
+const FACES = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+
+const BANCO = [
+  { texto: "O que é um aprendiz?", alternativas: ["Um jovem que trabalha e estuda uma profissão ao mesmo tempo", "Um aposentado que volta a trabalhar", "Um turista em visita à empresa", "Um cliente da empresa"], resposta: 0 },
+  { texto: "Com que idade um jovem pode começar como aprendiz?", alternativas: ["8 anos", "12 anos", "14 anos", "30 anos"], resposta: 2 },
+  { texto: "Até que idade, em geral, uma pessoa pode ser aprendiz?", alternativas: ["Até 16 anos", "Até 24 anos", "Até 40 anos", "Não existe idade máxima para ninguém"], resposta: 1 },
+  { texto: "O contrato de aprendizagem é feito de que forma?", alternativas: ["Só de palavra", "Por mensagem de celular", "Por escrito", "Não precisa de contrato"], resposta: 2 },
+  { texto: "Quanto tempo dura, no máximo, o contrato de aprendizagem?", alternativas: ["1 semana", "2 anos", "10 anos", "Não tem prazo, dura para sempre"], resposta: 1 },
+  { texto: "O que o aprendiz faz durante o programa?", alternativas: ["Só estuda a teoria", "Só trabalha, sem estudar", "Aprende na teoria e na prática", "Apenas observa os colegas"], resposta: 2 },
+  { texto: "Se o aprendiz ainda não terminou o ensino médio, o que ele precisa fazer?", alternativas: ["Continuar frequentando a escola", "Largar a escola", "Estudar só aos domingos", "Nada, a escola não importa"], resposta: 0 },
+  { texto: "Quem paga o uniforme e o material do curso do aprendiz?", alternativas: ["O próprio aprendiz", "Os pais do aprendiz", "A empresa", "Os colegas de trabalho"], resposta: 2 },
+  { texto: "Quantas horas por dia o aprendiz trabalha, em geral?", alternativas: ["Até 6 horas", "12 horas", "16 horas", "Quantas a empresa quiser"], resposta: 0 },
+  { texto: "Um aprendiz menor de 18 anos pode trabalhar à noite?", alternativas: ["Sim, sempre", "Sim, aos domingos", "Não, é proibido", "Sim, se ganhar mais"], resposta: 2 },
+  { texto: "O aprendiz tem direito a férias?", alternativas: ["Sim", "Não", "Só se pedir ao chefe", "Só depois de 10 anos"], resposta: 0 },
+  { texto: "O aprendiz tem carteira de trabalho assinada?", alternativas: ["Não, porque é só um curso", "Sim, ele é um empregado", "Só se for maior de 21 anos", "Só se a empresa quiser"], resposta: 1 },
+  { texto: "O aprendiz recebe FGTS, como os outros empregados?", alternativas: ["Não", "Só no último mês", "Sim", "Só se trabalhar aos sábados"], resposta: 2 },
+  { texto: "Qual é o salário mínimo do aprendiz?", alternativas: ["Nenhum, ele não recebe nada", "Pelo menos o salário mínimo, calculado por hora trabalhada", "Só vale-refeição", "Um valor combinado só de palavra"], resposta: 1 },
+  { texto: "Quem dá a parte teórica do curso de aprendizagem?", alternativas: ["Uma escola ou entidade de formação, como o Senai ou o Senac", "O porteiro da empresa", "O vizinho do aprendiz", "Ninguém, não existe teoria"], resposta: 0 },
+  { texto: "O aprendiz pode ser demitido sem nenhum motivo no meio do contrato?", alternativas: ["Sim, a qualquer hora", "Não, só em situações específicas", "Sim, se o chefe estiver irritado", "Sim, às sextas-feiras"], resposta: 1 },
+  { texto: "Um aprendiz menor de 18 anos pode trabalhar em local perigoso ou prejudicial à saúde?", alternativas: ["Sim", "Sim, com autorização do chefe", "Não, é proibido", "Sim, se ganhar um bônus"], resposta: 2 },
+  { texto: "A parte teórica do curso pode ser feita como tarefa em casa, fora da jornada?", alternativas: ["Sim, sempre", "Não, ela faz parte da jornada do aprendiz", "Sim, só nos feriados", "Sim, se o aprendiz preferir"], resposta: 1 },
+  { texto: "O contrato de aprendizagem tem prazo definido?", alternativas: ["Não, é por tempo indeterminado desde o início", "Sim, tem começo e fim definidos", "Só tem fim se o aprendiz pedir", "Só tem começo, nunca tem fim"], resposta: 1 },
+  { texto: "Existe limite de idade para o aprendiz com deficiência?", alternativas: ["Sim, 18 anos", "Sim, 24 anos", "Sim, 30 anos", "Não, não há limite de idade"], resposta: 3 },
+  { texto: "Quem fiscaliza se as regras da aprendizagem estão sendo cumpridas?", alternativas: ["Só o próprio patrão", "A fiscalização do Ministério do Trabalho", "Só os colegas do aprendiz", "Ninguém fiscaliza"], resposta: 1 },
+  { texto: "O que o aprendiz recebe ao concluir o curso?", alternativas: ["Um certificado de conclusão", "Um carro", "Nada, nem comprovante", "Uma multa"], resposta: 0 },
+  { texto: "Muitas empresas são obrigadas a contratar aprendizes. Como isso é chamado?", alternativas: ["Prêmio", "Sorteio", "Cota de aprendizagem", "Promoção"], resposta: 2 },
+  { texto: "Qual é o objetivo principal da aprendizagem profissional?", alternativas: ["Preparar o jovem para uma profissão, com formação e experiência", "Dar ao jovem um passeio pela empresa", "Substituir os funcionários mais velhos", "Ensinar só jogos e brincadeiras"], resposta: 0 }
+];
+
+let jogadores = [], casas = [], celulas = [];
+let sessao = 0;
+let vezDe = 0, qtd = 2, jogoFinalizado = false, ocupado = false, chegouAlguem = false, movendo = false;
+
+const $ = id => document.getElementById(id);
+const mostrar = id => ["tela-inicio", "tela-jogo", "tela-fim"].forEach(t => $(t).classList.toggle("hidden", t !== id));
+const embaralhar = a => { const r = [...a]; for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; };
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
+
+/* ---------- Início de partida ---------- */
+function iniciarJogo(lista) {
+  if (!Array.isArray(lista) || lista.length === 0) throw new Error("É preciso ter pelo menos um jogador.");
+  jogadores = lista.map(j => ({ ...j, pontos: 0, pos: 0, chegou: false }));
+  const qs = embaralhar(BANCO).map(q => {
+    const certa = q.alternativas[q.resposta];
+    const alts = embaralhar(q.alternativas);
+    return { ...q, alternativas: alts, resposta: alts.indexOf(certa) };
+  });
+  casas = Array.from({ length: TOTAL_CASAS }, (_, i) => (i === 0 || i === FIM) ? null : qs[(i - 1) % qs.length]);
+  sessao++; movendo = false;
+  vezDe = 0; jogoFinalizado = false; ocupado = false; chegouAlguem = false;
+  desenharTabuleiro();
+  mostrar("tela-jogo");
+  iniciarTurno();
+}
+
+function desenharTabuleiro() {
+  celulas = [];
+  const linhas = Math.ceil(TOTAL_CASAS / COLUNAS);
+  const frag = [];
+  for (let r = linhas - 1; r >= 0; r--) {          // linha de cima primeiro; trilha em zigue-zague
+    for (let c = 0; c < COLUNAS; c++) {
+      const i = r * COLUNAS + (r % 2 === 0 ? c : COLUNAS - 1 - c);
+      const cel = el("div", "casa" + (i === 0 ? " ini" : i === FIM ? " fim" : ""));
+      cel.append(el("span", "", i === 0 ? "Início" : i === FIM ? "Chegada" : String(i)), el("div", "fichas"));
+      celulas[i] = cel;
+      frag.push(cel);
+    }
+  }
+  $("tabuleiro").replaceChildren(...frag);
+  atualizarFichas();
+}
+
+function atualizarFichas() {
+  celulas.forEach(c => { c.querySelector(".fichas").replaceChildren(); c.classList.remove("atual"); });
+  jogadores.forEach((j, i) => {
+    const f = el("span", "ficha");
+    f.style.background = CORES[i];
+    f.title = j.name;
+    celulas[j.pos].querySelector(".fichas").append(f);
+  });
+  // cada jogador destaca a casa onde está, com a própria cor; o jogador da vez por último (sua cor prevalece)
+  const ordem = jogadores.map((_, i) => i).filter(i => i !== vezDe).concat(vezDe);
+  ordem.forEach(i => {
+    if (movendo && i === vezDe) return;   // enquanto anda, a casa por onde passa não recebe cor
+    const c = celulas[jogadores[i].pos];
+    c.classList.add("atual");
+    c.style.setProperty("--cor", CORES[i]);
+  });
+  atualizarPlacar();
+}
+
+function atualizarPlacar() {
+  const lista = jogadores.map((j, i) => ({ ...j, i })).sort((a, b) => b.pontos - a.pontos);
+  $("placar").replaceChildren(...lista.map(j => {
+    const linha = el("div", "result-line" + (j.i === vezDe && !jogoFinalizado ? " vez" : ""));
+    linha.style.setProperty("--cor", CORES[j.i]);
+    const nome = el("span", "", j.name);
+    nome.append(el("small", "", j.chegou ? "Chegou!" : `Casa ${j.pos}`));
+    linha.append(nome, el("b", "", j.pontos));
+    return linha;
+  }));
+}
+
+/* ---------- Turno ---------- */
+function iniciarTurno() {
+  const j = jogadores[vezDe];
+  const tag = $("vez");
+  tag.style.background = CORES[vezDe];
+  tag.replaceChildren(el("span", "dot"), `Vez de ${j.name}`);
+  $("area-dado").classList.remove("hidden");
+  $("area-pergunta").classList.add("hidden");
+  $("feedback").classList.add("hidden");
+  $("rolar").disabled = false;
+  ocupado = false;
+  celulas.forEach(c => c.classList.remove("acerto", "erro"));   // casas voltam ao neutro
+  atualizarFichas();
+}
+
+function rolarDado() {
+  if (jogoFinalizado || ocupado) return;
+  ocupado = true;
+  $("rolar").disabled = true;
+  const valor = 1 + Math.floor(Math.random() * 6);
+  let n = 0;
+  const s = sessao;
+  const t = setInterval(() => {
+    if (s !== sessao) return clearInterval(t);
+    $("dado").textContent = FACES[Math.floor(Math.random() * 6)];
+    if (++n >= 10) {
+      clearInterval(t);
+      $("dado").textContent = FACES[valor - 1];
+      mover(valor);
+    }
+  }, 70);
+}
+
+function mover(passos) {
+  const j = jogadores[vezDe];
+  const s = sessao;
+  movendo = true;   // durante o movimento, nenhuma casa recebe a cor do jogador
+  const passo = () => {
+    if (s !== sessao) return;
+    if (passos <= 0 || j.pos >= FIM) return chegouNaCasa();
+    j.pos++; passos--;
+    atualizarFichas();
+    setTimeout(passo, 250);
+  };
+  setTimeout(passo, 300);
+}
+
+function chegouNaCasa() {
+  movendo = false;
+  atualizarFichas();   // só a casa onde parou recebe o destaque
+  const j = jogadores[vezDe];
+  if (j.pos >= FIM) {
+    j.chegou = true;
+    let msg = `${j.name} chegou à casa final!`;
+    if (!chegouAlguem) { j.pontos += BONUS_CHEGADA; msg += ` Foi o primeiro: +${BONUS_CHEGADA}.`; }
+    chegouAlguem = true;
+    return mostrarFeedback(msg);
+  }
+  mostrarPergunta(casas[j.pos]);
+}
+
+function mostrarPergunta(p) {
+  $("area-dado").classList.add("hidden");
+  $("area-pergunta").classList.remove("hidden");
+  $("enunciado").textContent = p.texto;
+  $("opts").replaceChildren(...p.alternativas.map((alt, i) => {
+    const b = el("button", "opt");
+    b.dataset.i = i;
+    b.append(el("span", "l", "ABCD"[i]), el("span", "", alt));
+    b.addEventListener("click", () => responder(i));
+    return b;
+  }));
+  $("painel").scrollIntoView({ block: "nearest" });
+}
+
+function responder(resposta) {
+  if (jogoFinalizado) return;
+  const j = jogadores[vezDe];
+  const p = casas[j.pos];
+  const acertou = resposta === p.resposta;
+  j.pontos += acertou ? PONTOS_ACERTO : -PENALIDADE_ERRO;
+  document.querySelectorAll(".opt").forEach(b => {
+    b.disabled = true;
+    const i = Number(b.dataset.i);
+    if (i === p.resposta) b.classList.add("certa");
+    else if (i === resposta) b.classList.add("errada");
+  });
+  celulas[j.pos].classList.add(acertou ? "acerto" : "erro");
+  mostrarFeedback(acertou ? `Acertou! +${PONTOS_ACERTO} pontos.` : `Errou. −${PENALIDADE_ERRO} pontos. A resposta certa está destacada.`);
+}
+
+function mostrarFeedback(msg) {
+  $("fb-msg").textContent = msg;
+  $("feedback").classList.remove("hidden");
+  atualizarPlacar();
+}
+
+function avancarVez() {
+  for (let k = 0; k < jogadores.length; k++) {
+    vezDe = (vezDe + 1) % jogadores.length;
+    if (vezDe === 0 && chegouAlguem) return finalizarJogo();   // termina ao fim da rodada
+    if (!jogadores[vezDe].chegou) return iniciarTurno();
+  }
+  finalizarJogo();
+}
+
+function finalizarJogo() {
+  if (jogoFinalizado) return;
+  jogoFinalizado = true;
+  const maior = Math.max(...jogadores.map(j => j.pontos));
+  const vencedores = jogadores.filter(j => j.pontos === maior);
+  $("msg-fim").textContent = vencedores.length > 1
+    ? `Empate entre ${vencedores.map(j => j.name).join(", ")}!`
+    : `${vencedores[0].name} venceu com ${maior} pontos!`;
+  $("res-fim").replaceChildren(...[...jogadores].sort((a, b) => b.pontos - a.pontos).map((j, i) => {
+    const linha = el("div");
+    linha.append(el("span", "", `${i + 1}. ${j.name}${j.chegou ? " 🏁" : ""}`), el("b", "", `${j.pontos} pts`));
+    return linha;
+  }));
+  mostrar("tela-fim");
+}
+
+/* ---------- Tela inicial ---------- */
+function desenharInicio() {
+  $("qtd").replaceChildren(...[1, 2, 3, 4].map(n => {
+    const b = el("button", "seg", n);
+    b.setAttribute("aria-pressed", n === qtd);
+    b.addEventListener("click", () => { qtd = n; desenharInicio(); });
+    return b;
+  }));
+  const antigos = [...document.querySelectorAll("#nomes input")].map(i => i.value);
+  $("nomes").replaceChildren(...Array.from({ length: qtd }, (_, i) => {
+    const w = el("div", "nome");
+    const d = el("span", "dot");
+    d.style.background = CORES[i];
+    const inp = el("input");
+    inp.placeholder = `Jogador ${i + 1}`;
+    inp.maxLength = 16;
+    inp.value = antigos[i] || "";
+    inp.setAttribute("aria-label", `Nome do jogador ${i + 1}`);
+    w.append(d, inp);
+    return w;
+  }));
+}
+
+$("comecar").addEventListener("click", () => iniciarJogo(
+  [...document.querySelectorAll("#nomes input")].map((inp, i) => ({ name: inp.value.trim() || `Jogador ${i + 1}` }))
+));
+$("rolar").addEventListener("click", rolarDado);
+$("continuar").addEventListener("click", avancarVez);
+function voltarAoInicio() {
+  sessao++; movendo = false; ocupado = false; jogoFinalizado = true;
+  mostrar("tela-inicio"); desenharInicio();
+  window.scrollTo(0, 0);
+}
+$("novo-jogo").addEventListener("click", voltarAoInicio);
+$("encerrar").addEventListener("click", voltarAoInicio);
+$("novo").addEventListener("click", () => { mostrar("tela-inicio"); desenharInicio(); });
+desenharInicio();
+</script>
+</body>
+</html>
